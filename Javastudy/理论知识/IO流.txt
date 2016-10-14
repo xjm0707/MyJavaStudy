@@ -1,0 +1,154 @@
+字符流（Writer和Reader）
+1. FileWriter和FileReader
+FileWriter
+
+class  FileWriterDemo{
+  public static void main(String[] args) throws IOException{
+      //创建一个FileWriter对象。该对象一被初始化就必须要明确被操作的文件。
+      //而且该文件会被创建到指定目录下。如果该目录下已有同名文件，将被覆盖。
+      //其实该步就是在明确数据要存放的目的地。
+      FileWriter fw = new FileWriter("demo.txt");
+      //传递一个true参数，代表不覆盖已有的文件。并在已有文件的末尾处进行数据续写。
+      FileWriter fw = new FileWriter("demo.txt",true);
+
+      //调用write方法，将字符串写入到流中。
+      fw.write("abcde");
+
+      //刷新流对象中的缓冲中的数据。
+      //将数据刷到目的地中。
+      //fw.flush();
+
+      //关闭流资源，但是关闭之前会刷新一次内部的缓冲中的数据。
+      //将数据刷到目的地中。
+      //和flush区别：flush刷新后，流可以继续使用，close刷新后，会将流关闭。
+      fw.close();
+  }
+}
+FileReader
+
+class  FileReaderDemo{
+    public static void main(String[] args) throws IOException{
+        //创建一个文件读取流对象，和指定名称的文件相关联。
+        //要保证该文件是已经存在的，如果不存在，会发生异常FileNotFoundException
+        FileReader fr = new FileReader("demo.txt");
+
+        //调用读取流对象的read方法。
+        //read():一次读一个字符。而且会自动往下读。
+
+        int ch = 0;
+
+        while((ch=fr.read())!=-1)
+        {
+            System.out.println(
+        }
+
+        fr.close();
+    }
+}
+2. BufferedWriter和BufferedReader
+缓冲区的出现是为了提高流的操作效率而出现的，所以在创建缓冲区之前，必须要先有流对象。这种设计模式叫做装饰模式，比继承灵活，避免了继承体系臃肿。
+
+BufferedWriter
+
+class  BufferedWriterDemo{
+    public static void main(String[] args) throws IOException{
+        //创建一个字符写入流对象。
+        FileWriter fw = new FileWriter("buf.txt");
+
+        //为了提高字符写入流效率。加入了缓冲技术。
+        //只要将需要被提高效率的流对象作为参数传递给缓冲区的构造函数即可。
+        BufferedWriter bufw = new BufferedWriter(fw);
+
+        for(int x=1; x<5; x++)
+        {
+            bufw.write("abcd"+x);
+            bufw.newLine();
+            bufw.flush();
+        }
+
+        //记住，只要用到缓冲区，就要记得刷新。
+        //bufw.flush();
+
+        //其实关闭缓冲区，就是在关闭缓冲区中的流对象。
+        bufw.close();
+    }
+}
+BufferedReader
+
+class  BufferedReaderDemo{
+    public static void main(String[] args) throws IOException{
+        //创建一个读取流对象和文件相关联。
+        FileReader fr = new FileReader("buf.txt");
+
+        //为了提高效率。加入缓冲技术。将字符读取流对象作为参数传递给缓冲对象的构造函数。
+        BufferedReader bufr = new BufferedReader(fr);
+
+        String line = null;
+
+        while((line=bufr.readLine())!=null)
+        {
+            System.out.print(line);
+        }
+
+        bufr.close();
+    }
+}
+3. OutputStreamWriter和InputStreamReader
+转换流是字符和字节之间的桥梁，通常涉及到字符编码转换时，需要用到转换流。
+
+class  TransStreamDemo{
+    public static void main(String[] args) throws IOException{
+        //获取键盘录入对象。
+        //InputStream in = System.in;
+
+        //将字节流对象转成字符流对象，使用转换流。InputStreamReader
+        //InputStreamReader isr = new InputStreamReader(in);
+
+        //为了提高效率，将字符串进行缓冲区技术高效操作。使用BufferedReader
+
+        //BufferedReader bufr = new BufferedReader(isr);
+
+        //键盘的最常见写法。
+        BufferedReader bufr = 
+                new BufferedReader(new InputStreamReader(System.in));
+
+        BufferedWriter bufw = 
+                new BufferedWriter(new OutputStreamWriter(System.out));
+
+        String line = null;
+
+        while((line=bufr.readLine())!=null){
+            if("over".equals(line))
+                break;
+            bufw.write(line.toUpperCase());
+            bufw.newLine();
+            bufw.flush();
+        }
+        bufr.close();
+    }
+}
+
+字节流
+1. OutputStream和InputStream
+FileOutputStream
+
+public static void writeFile() throws IOException {
+    FileOutputStream fos = new FileOutputStream("fos.txt");
+
+    fos.write("abcde".getBytes());
+
+    fos.close();
+}
+FileInputStream
+
+public static void readFile_1()throws IOException{
+    FileInputStream fis = new FileInputStream("fos.txt");
+
+    int ch = 0;
+
+    while((ch=fis.read())!=-1){
+        System.out.println((char)ch);
+    }
+
+    fis.close();
+}
